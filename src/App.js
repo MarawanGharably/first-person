@@ -3,81 +3,16 @@ import React, { Component } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { PointerLockControls } from './PointerLockControls'
-import floorImage from './static/floor2.jpg'
-import wallImage from './static/wall.jpeg'
-import t_Shirt from './static/moko2.glb'
+import wallImage from './static/wall.jpg'
+import roomObject from './static/glb_files/walls.glb'
+import shoes from './static/glb_files/shoes.glb'
+import shoes2 from './static/glb_files/shoes_2.glb'
+import smallBag from './static/glb_files/small_bag.glb'
+import smallBag2 from './static/glb_files/small_bag_2.glb'
+import bag from './static/glb_files/bag.glb'
+import tShirt from './static/glb_files/moko2.glb'
 import './App.css';
 
-
-const createStore = () => {
-  
-  const textureLoader = new THREE.TextureLoader();
-
-  const newStore = new THREE.Group();
-
-  const wallGeometry = new THREE.PlaneGeometry(20, 5, 100, 100);
-  const wallTexture = textureLoader.load( wallImage );
-  const wallMaterial = new THREE.MeshStandardMaterial( { map: wallTexture, side: THREE.DoubleSide });
-  wallTexture.anisotropy = 16;
-  wallTexture.wrapS = wallTexture.wrapT = THREE.RepeatWrapping;
-  wallTexture.repeat.set( 1, 1 );
-  wallTexture.encoding = THREE.sRGBEncoding;
-
-  const floorGeometry = new THREE.PlaneGeometry(20, 20, 100, 100);
-  const floorTexture = textureLoader.load( floorImage );
-  const floorMaterial = new THREE.MeshStandardMaterial( { map: floorTexture, side: THREE.DoubleSide });
-  floorTexture.anisotropy = 16;
-  floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-  floorTexture.repeat.set( 20, 20 );
-  floorTexture.encoding = THREE.sRGBEncoding;
-
-  const shelfGeometry = new THREE.BoxGeometry(15, .1, 1 );
-  const shelfMaterial = new THREE.MeshStandardMaterial( { color : '#000' });
-  
-  const firstWall = new THREE.Mesh( wallGeometry, wallMaterial );
-  firstWall.position.z = -10;
-  firstWall.position.y = 2.5;
-
-  const firstShelf = new THREE.Mesh( shelfGeometry, shelfMaterial );
-  firstShelf.position.z = -9.5;
-  firstShelf.position.y = 1;
-
-  const secondWall = new THREE.Mesh( wallGeometry, wallMaterial );
-  secondWall.position.z = 10;
-  secondWall.position.y = 2.5;
-
-  const secondShelf = new THREE.Mesh( shelfGeometry, shelfMaterial );
-  secondShelf.position.z = 9.5;
-  secondShelf.position.y = 1;
-
-  const thirdWall = new THREE.Mesh( wallGeometry, wallMaterial );
-  thirdWall.rotation.y = Math.PI / 2;
-  thirdWall.position.x = 10;
-  thirdWall.position.y = 2.5;
-
-  const thirdShelf = new THREE.Mesh( shelfGeometry, shelfMaterial );
-  thirdShelf.rotation.y = Math.PI / 2;
-  thirdShelf.position.x = 9.5;
-  thirdShelf.position.y = 1;
-
-  const fourthWall = new THREE.Mesh( wallGeometry, wallMaterial );
-  fourthWall.rotation.y = Math.PI / 2;
-  fourthWall.position.x = -10;
-  fourthWall.position.y = 2.5;
-
-  const fourthShelf = new THREE.Mesh( shelfGeometry, shelfMaterial );
-  fourthShelf.rotation.y = -Math.PI / 2;
-  fourthShelf.position.x = -9.5;
-  fourthShelf.position.y = 1;
-
-  const floor = new THREE.Mesh( floorGeometry, floorMaterial );
-  floor.rotation.x = Math.PI / 2;
-
-  newStore.add(firstWall, firstShelf, secondWall, secondShelf, thirdWall, thirdShelf, fourthWall, fourthShelf, floor);
-
-  return newStore;
-
-}
 
 var moveForward = false;
 var moveBackward = false;
@@ -91,6 +26,43 @@ const raycaster = new THREE.Raycaster( );
 const mouse = new THREE.Vector2();
 var objectIntersected = false;
 const lastCamPos = new THREE.Vector3();
+
+const createStore = () => {
+
+  const textureLoader = new THREE.TextureLoader();
+
+  const newStore = new THREE.Group();
+
+  const wallGeometry = new THREE.PlaneGeometry(20, 5, 100, 100);
+  const wallTexture = textureLoader.load( wallImage );
+  const wallMaterial = new THREE.MeshStandardMaterial( { map: wallTexture, side: THREE.DoubleSide });
+  wallTexture.anisotropy = 16;
+  wallTexture.wrapS = wallTexture.wrapT = THREE.RepeatWrapping;
+  wallTexture.repeat.set( 1, 1 );
+  wallTexture.encoding = THREE.sRGBEncoding;
+
+  const firstWall = new THREE.Mesh( wallGeometry, wallMaterial );
+  firstWall.position.z = -10;
+  firstWall.position.y = 2.5;
+
+  const secondWall = new THREE.Mesh( wallGeometry, wallMaterial );
+  secondWall.position.z = 10;
+  secondWall.position.y = 2.5;
+
+  const thirdWall = new THREE.Mesh( wallGeometry, wallMaterial );
+  thirdWall.rotation.y = Math.PI / 2;
+  thirdWall.position.x = 10;
+  thirdWall.position.y = 2.5;
+
+  const fourthWall = new THREE.Mesh( wallGeometry, wallMaterial );
+  fourthWall.rotation.y = Math.PI / 2;
+  fourthWall.position.x = -10;
+  fourthWall.position.y = 2.5;
+
+  newStore.add(firstWall, secondWall, thirdWall, fourthWall);
+
+  return newStore;
+}
 
 const onKeyDown = function ( event ) {
 
@@ -146,25 +118,13 @@ const onKeyUp = function ( event ) {
   }
 };
 
-const createObject = () => {
-
-  const geometry = new THREE.SphereGeometry(.5, 32, 16);
-  const material = new THREE.MeshNormalMaterial();
-  const newObject = new THREE.Mesh(geometry, material);
-  return newObject;
-}
-
 function onMouseMove( event ) {
-
 	mouse.x = ( event.clientX / document.body.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / document.body.innerHeight ) * 2 + 1;
-
 }
-
 export default class App extends Component {
 
   componentDidMount(){
-
     const cursor = document.createElement('div')
     cursor.style.width = '10px'
     cursor.style.height = '10px'
@@ -194,6 +154,7 @@ export default class App extends Component {
 
     const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 1000);
     camera.position.y = 1.5;
+    camera.position.z = 6;
 
     const controls = new PointerLockControls( camera, canvas );
 
@@ -201,21 +162,46 @@ export default class App extends Component {
     document.addEventListener( 'keydown', onKeyDown );
     document.addEventListener( 'keyup', onKeyUp );
 
+    const surroundings = createStore();
+    scene.add(surroundings);
+
     scene.add( controls.getObject() );
-
-    const newStore = createStore();
-    const sphere = createObject();
-    scene.add(newStore);
-    scene.add(sphere);
-
-    sphere.position.set(-3, 1.55, -9.2);
 
     const loader = new GLTFLoader();
     loader.crossOrigin = true;
-    loader.load( t_Shirt, function ( data ) {
-      window.tShirt = data.scene;
-      window.tShirt.position.set(3, 2, -9.2);
-      scene.add( window.tShirt );
+    loader.load( roomObject, function ( data ) {
+      window.roomObject = data.scene;
+      window.roomObject.position.set(0, 0, 0);
+      scene.add( window.roomObject );
+    });
+    loader.load( shoes, function ( data ) {
+      window.shoes = data.scene;
+      window.shoes.position.set(-4.2, 1.25, 0);
+      window.shoes.rotation.y = Math.PI/2
+      scene.add( window.shoes );
+    });
+    loader.load( shoes2, function ( data ) {
+      window.shoes2 = data.scene;
+      window.shoes2.position.set(3.8, 1.25, 0.7);
+      window.shoes2.rotation.y = -Math.PI/2.5
+      scene.add( window.shoes2 );
+    });
+    loader.load( bag, function ( data ) {
+      window.bag = data.scene;
+      window.bag.position.set(3.6, 1.2, 1.7);
+      scene.add( window.bag );
+    });
+    loader.load( smallBag, function ( data ) {
+      window.smallBag = data.scene;
+      window.smallBag.position.set(-4.2, 1.25, 0.9);
+      window.smallBag.rotation.y = Math.PI/2
+      scene.add( window.smallBag );
+    });
+    loader.load( smallBag2, function ( data ) {
+      window.smallBag2 = data.scene;
+      window.smallBag2.position.set(-4.2, 1.25, -0.9);
+      window.smallBag2.rotation.y = Math.PI/2
+      scene.add( window.smallBag2 );
     });
 
     function animate() {
@@ -229,17 +215,16 @@ export default class App extends Component {
         raycaster.setFromCamera( mouse, camera );
 
         // // calculate objects intersecting the picking ray
-        const intersects = raycaster.intersectObjects( [sphere, window.tShirt] );
+        // const intersects = raycaster.intersectObjects( [sphere, window.tShirt] );
 
-        if ( intersects && intersects.length > 0) {
-          objectIntersected = true;
-        }
+        // if ( intersects && intersects.length > 0) {
+        //   objectIntersected = true;
+        // }
 
-        else{
-          objectIntersected = false;
-        }
+        // else{
+        //   objectIntersected = false;
+        // }
 
-        console.log(objectIntersected);  
 
         const delta = ( time - prevTime ) / 1000;
 
@@ -252,19 +237,19 @@ export default class App extends Component {
 
         if (moveForward || moveBackward){
          
-            velocity.z -= direction.z * 40.0 * delta;
+            velocity.z -= direction.z * 30.0 * delta;
             lastCamPos.copy(camera.position);
         }
         if (moveLeft || moveRight) {
 
-          velocity.x -= direction.x * 40.0 * delta;
+          velocity.x -= direction.x * 30.0 * delta;
           lastCamPos.copy(camera.position);
         }    
 
         controls.moveRight( - velocity.x * delta );
         controls.moveForward( - velocity.z * delta );
 
-        if ( camera.position.x < -9 || camera.position.x > 9 || camera.position.z < -9 || camera.position.z > 9 ){
+        if ( camera.position.x < -6.5 || camera.position.x > 6.5 || camera.position.z < -6.5 || camera.position.z > 6.5 ){
 
           camera.position.copy(lastCamPos);
         }
